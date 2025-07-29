@@ -1,0 +1,109 @@
+what time is the sunday service:
+  variants:
+    - when does church start
+    - what time is the service
+    - sunday service time
+    - what time does church begin
+    - when do services start
+  answer: >
+    Nairobi Chapel has two Sunday services: one at 9:00 AM and another at 11:30 AM.
+
+how do i join a ministry:
+  variants:
+    - how can i serve
+    - how to get involved
+    - how do i sign up for a ministry
+    - join ministry
+  answer: >
+    You can join a ministry by visiting the Welcome Desk after service or signing up online at nairobichapel.org/ministries.
+
+how do i give my tithe online:
+  variants:
+    - how do i tithe
+    - how can i give offering
+    - ways to send tithe
+    - church giving methods
+  answer: >
+    You can give via M-Pesa Paybill 123456 (Account: Tithe) or visit give.nairobichapel.org.
+
+do you have a youth program:
+  variants:
+    - is there teen church
+    - youth service time
+    - when is youth service
+    - youth ministry
+  answer: >
+    Yes! The Youth Campus meets every Sunday at 11:30 AM for teens and young adults.
+
+what programs are there for children:
+  variants:
+    - kids ministry
+    - sunday school
+    - children’s church
+    - kids church time
+  answer: >
+    The Kids Campus runs every Sunday during services. It’s a fun, faith-based environment for children of all ages.
+
+can i bring my friend or family:
+  variants:
+    - is it open to the public
+    - can i invite someone
+    - are visitors welcome
+  answer: >
+    Absolutely! All are welcome to attend any service or event at Nairobi Chapel.
+
+do you offer premarital counseling:
+  variants:
+    - counseling for couples
+    - marriage preparation
+    - do you have couple counseling
+  answer: >
+    Yes, we offer premarital counseling. You can register through the church office or website under 'Family Life'.
+
+how can i meet the pastor:
+  variants:
+    - can i talk to the pastor
+    - book a session with pastor
+    - speak with church leader
+  answer: >
+    You can request a meeting with any of our pastors through the church office or by filling out the form at nairobichapel.org/contact.
+
+is there parking:
+  variants:
+    - where can i park
+    - do you have parking
+    - is parking free
+  answer: >
+    Yes, there’s ample secure parking on site. Our ushers and security team will guide you when you arrive.
+
+how can i volunteer:
+  variants:
+    - how do i help
+    - join a team
+    - serve in church
+  answer: >
+    Volunteering opportunities are available in worship, tech, hospitality, community outreach, and more. Visit the info desk or our website to sign up.
+
+do you have online services:
+  variants:
+    - can i watch online
+    - livestream church
+    - virtual church
+  answer: >
+    Yes. All our Sunday services are streamed live on our YouTube channel.
+
+what happens during the week:
+  variants:
+    - weekday activities
+    - midweek service
+    - weekly events
+  answer: >
+    Nairobi Chapel runs Bible studies, prayer meetings, leadership training, and community programs during the week.
+
+what is the church vision:
+  variants:
+    - church mission
+    - why does the church exist
+    - purpose of the church
+  answer: >
+    Our vision is to grow deep in Christ and reach wide to impact the world for God’s glory.
