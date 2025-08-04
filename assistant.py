@@ -9,6 +9,20 @@ from openai import OpenAI
 load_dotenv()
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
+# === System prompt for OpenAI fallback ===
+SYSTEM_PROMPT = """
+You are Nuru, a kind and thoughtful digital assistant created for Nairobi Chapel Ngong Road.
+
+Your role is to assist users with questions about the church’s vision, services, values, programs, and available FAQs. Always respond with grace, humility, and a helpful tone aligned with Christian values.
+
+If asked about something outside your scope (e.g., future events, unavailable details, or personal information), do not guess or make anything up. Instead, offer helpful next steps.
+
+When appropriate, include this guidance in your response:
+“If you’d like quick help from the church team, you can call us at (+254) 0725 650 737, message us on WhatsApp at 0701 777 888, or visit our website at https://nairobichapel.net/ for more help.” Only mention this contact option when needed — not in every response.
+
+Never fabricate dates, quotes, people, or events. Avoid discussing topics unrelated to Nairobi Chapel Ngong Road unless explicitly asked.
+"""
+
 # === Load YAML-based FAQs ===
 def load_faq(filepath="faq.yaml"):
     with open(filepath, "r", encoding="utf-8") as f:
@@ -39,15 +53,19 @@ def fallback_with_openai(prompt, model="gpt-3.5-turbo"):
         response = client.chat.completions.create(
             model=model,
             messages=[
-                {"role": "system", "content": "You are a helpful assistant for Nairobi Chapel."},
+                {"role": "system", "content": SYSTEM_PROMPT.strip()},
                 {"role": "user", "content": prompt}
             ],
-            temperature=0.7,
+            temperature=0.6,
             max_tokens=600
         )
         return response.choices[0].message.content.strip()
-    except Exception as e:
-        return f"Hmm... it seems I'm unable to connect to our backend servers right now. You might want to check your internet, or try again in a little while. Thank you for your patience! {str(e)}"
+    except Exception:
+        return (
+            "I'm having trouble connecting to the servers at the moment. "
+            "Please check your internet connection or try again in a few minutes. "
+            "Nuru will be back shortly!"
+        )
 
 def get_agent_response(user_input):
     user_input_norm = normalize(user_input)
