@@ -34,6 +34,21 @@ print("FAQ loaded keys:", list(flat_faq_map.keys()))
 def normalize(text):
     return re.sub(r"[^\w\s]", "", text.lower().strip())
 
+def fallback_with_openai(prompt, model="gpt-3.5-turbo"):
+    try:
+        response = client.chat.completions.create(
+            model=model,
+            messages=[
+                {"role": "system", "content": "You are a helpful assistant for Nairobi Chapel."},
+                {"role": "user", "content": prompt}
+            ],
+            temperature=0.7,
+            max_tokens=600
+        )
+        return response.choices[0].message.content.strip()
+    except Exception as e:
+        return f"Hmm... it seems I'm unable to connect to our backend servers right now. You might want to check your internet, or try again in a little while. Thank you for your patience! {str(e)}"
+
 def get_agent_response(user_input):
     user_input_norm = normalize(user_input)
 
@@ -50,21 +65,8 @@ def get_agent_response(user_input):
     with open("unmatched_questions.log", "a", encoding="utf-8") as f:
         f.write(user_input + "\n")
 
-    # 4. Optional fallback to GPT (commented out)
-    # try:
-    #     response = client.chat.completions.create(
-    #         model="gpt-3.5-turbo",
-    #         messages=[
-    #             {"role": "system", "content": "You are a helpful assistant for Nairobi Chapel."},
-    #             {"role": "user", "content": user_input}
-    #         ]
-    #     )
-    #     return response.choices[0].message.content.strip()
-    # except Exception as e:
-    #     return f"Sorry, something went wrong while using the assistant: {str(e)}"
-
-    # 5. Static fallback
-    return "I'm not sure how to answer that yet because I'm still learning. Please try rephrasing or check back soon."
+    # 4. Fallback to OpenAI
+    return fallback_with_openai(user_input)
 
 # === For CLI testing only ===
 if __name__ == "__main__":
