@@ -1,6 +1,8 @@
 import os
 import re
 import yaml
+import json
+import random
 import difflib
 from dotenv import load_dotenv
 from openai import OpenAI
@@ -9,28 +11,22 @@ from openai import OpenAI
 load_dotenv()
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
-# === System prompt for OpenAI fallback ===
-SYSTEM_PROMPT = """
-You are Nuru, a kind and thoughtful digital assistant created for Nairobi Chapel Ngong Road.
+# Load Nuru configuration
+with open("config/nuru_config.json", "r", encoding="utf-8") as f:
+    config = json.load(f)
 
-Your role is to assist users with questions about the church’s vision, services, values, programs, and available FAQs. Always respond with grace, humility, and a helpful tone aligned with Christian values.
+SYSTEM_PROMPT = config["fallback_prompt"]["system_message"]
+PREFIXES = config["tone_guide"]["response_tips"]["prefixes"]
+SUFFIXES = config["tone_guide"]["response_tips"]["suffixes"]
 
-If asked about something outside your scope (e.g., future events, unavailable details, or personal information), do not guess or make anything up. Instead, offer helpful next steps.
-
-When appropriate, include this guidance in your response:
-“If you’d like quick help from the church team, you can call us at (+254) 0725 650 737, message us on WhatsApp at 0701 777 888, or visit our website at https://nairobichapel.net/ for more help.” Only mention this contact option when needed — not in every response.
-
-Never fabricate dates, quotes, people, or events. Avoid discussing topics unrelated to Nairobi Chapel Ngong Road unless explicitly asked.
-"""
-
-# === Load YAML-based FAQs ===
+# Load YAML-based FAQs
 def load_faq(filepath="faq.yaml"):
     with open(filepath, "r", encoding="utf-8") as f:
         return yaml.safe_load(f)
 
 faq_items = load_faq()
 
-# === Build a normalized flat map: question/variant → answer ===
+# Build a normalized flat map: question/variant → answer
 flat_faq_map = {}
 
 for question, content in faq_items.items():
@@ -43,8 +39,6 @@ for question, content in faq_items.items():
 
 print("FAQ loaded keys:", list(flat_faq_map.keys()))
 
-
-# === Core response handler ===
 def normalize(text):
     return re.sub(r"[^\w\s]", "", text.lower().strip())
 
@@ -59,18 +53,20 @@ def fallback_with_openai(prompt, model="gpt-3.5-turbo"):
             temperature=0.6,
             max_tokens=600
         )
-        return response.choices[0].message.content.strip()
+        content = response.choices[0].message.content.strip()
+        prefix = random.choice(PREFIXES)
+        suffix = random.choice(SUFFIXES)
+        return f"{prefix} {content} {suffix}"
     except Exception:
         return (
-            "I'm having trouble connecting to the servers at the moment. "
-            "Please check your internet connection or try again in a few minutes. "
-            "Nuru will be back shortly!"
+            "Hmm! I’m having trouble connecting to the servers at the moment... "
+            "Please try again shortly. Thank you for your patience!"
         )
 
 def get_agent_response(user_input):
     user_input_norm = normalize(user_input)
 
-    # 1. Exact/variant match
+    # 1. Exact match
     if user_input_norm in flat_faq_map:
         return flat_faq_map[user_input_norm]
 
@@ -79,14 +75,14 @@ def get_agent_response(user_input):
     if match:
         return flat_faq_map[match[0]]
 
-    # 3. Log unmatched questions
+    # 3. Log unmatched
     with open("unmatched_questions.log", "a", encoding="utf-8") as f:
         f.write(user_input + "\n")
 
-    # 4. Fallback to OpenAI
+    # 4. Fallback
     return fallback_with_openai(user_input)
 
-# === For CLI testing only ===
+# CLI Testing
 if __name__ == "__main__":
     print("Welcome to Chapel Assistant! (Type 'exit' to quit)")
     while True:
