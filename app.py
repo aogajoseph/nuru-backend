@@ -7,13 +7,15 @@ import json
 app = Flask(__name__)
 CORS(app)
 
+# === Chat endpoint ===
 @app.route("/ask", methods=["POST"])
 def ask():
-    data = request.json
+    data = request.get_json()
     user_input = data.get("question", "")
     answer = get_agent_response(user_input)
     return jsonify({"response": answer})
 
+# === Config endpoint ===
 @app.route("/config", methods=["GET"])
 def get_config():
     try:
@@ -21,7 +23,10 @@ def get_config():
             config = json.load(f)
         return jsonify(config)
     except Exception as e:
-        return jsonify({"error": "Failed to load configuration", "details": str(e)}), 500
+        return jsonify({
+            "error": "Failed to load configuration",
+            "details": str(e)
+        }), 500
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
